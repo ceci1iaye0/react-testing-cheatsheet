@@ -48,6 +48,16 @@ jest
   .mockImplementation(() => ({ handleOnChange: jest.fn() })); // mock implementation
 ```
 
+```typescript
+import * as helpers from "../helpers";
+
+const mockHelperFn = jest.spyOn(helpers, "helperFn");
+
+it("Test", () => {
+  expect(mockHelperFn).toHaveBeenCalledTimes(1);
+});
+```
+
 ## `window.location`
 
 ```typescript

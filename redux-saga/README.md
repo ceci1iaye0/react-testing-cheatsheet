@@ -112,3 +112,61 @@ describe("Test", () => {
   });
 });
 ```
+
+# Generator Function
+
+```typescript
+// index.ts
+import { call } from "redux-saga/effects";
+
+export function* getPost(postId: string) {
+  return yield call("http://url.com", postId);
+}
+
+// index.test.ts
+import { call } from "redux-saga-test-plan/matchers";
+
+describe("getPost", () => {
+  it("Should call API to get post", () => {
+    const postId = "1";
+
+    const getPostFn = getPost(postId);
+    const result = getPostFn.next();
+    expect(result.value).toEqual(call("http://url.com", postId));
+  });
+});
+```
+
+```typescript
+// index.ts
+import { call } from "redux-saga/effects";
+
+export function* getPosts(postIds: string[]) {
+  const res: any[] = [];
+
+  for (const postId of postIds) {
+    const res_ = yield getPost(postId);
+    res.push(res_);
+  }
+
+  return res;
+}
+
+// index.test.ts
+import { call } from "redux-saga-test-plan/matchers";
+
+describe("getPosts", () => {
+  it("Should call API to get post", () => {
+    const postIds = ["1", "2"];
+
+    const getPostsFn = getPosts(postIds);
+    let result = getPostsFn.next();
+    result = getPostsFn.next("mock res for postId = 1");
+    result = getPostsFn.next("mock res for postId = 2");
+    expect(result.value).toEqual([
+      "mock res for postId = 1",
+      "mock res for postId = 2",
+    ]);
+  });
+});
+```
